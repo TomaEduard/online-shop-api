@@ -1,0 +1,9 @@
+server:
+  port: 8082
+
+spring:
+  jpa.hibernate.ddl-auto: update
+  datasource:
+    url: jdbc:mysql://localhost:3306/online_shop
+    username: shop-admin
+    password: admin
