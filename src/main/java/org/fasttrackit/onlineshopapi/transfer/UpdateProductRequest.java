@@ -1,34 +1,13 @@
-package org.fasttrackit.onlineshopapi.domain;
+package org.fasttrackit.onlineshopapi.transfer;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+//  Se mai numeste si DTO(Data transfer object)
 
-//Acesta se numeste si DAO ( Data acces object)
-@Entity
-public class Product {
+public class UpdateProductRequest {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
-
-    @NotNull
-    @Size(min = 1, max = 300)
     private String name;
     private String sku;
     private double price;
     private int quantity;
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
 
     public String getName() {
         return name;
@@ -60,5 +39,15 @@ public class Product {
 
     public void setQuantity(int quantity) {
         this.quantity = quantity;
+    }
+
+    @Override
+    public String toString() {
+        return "UpdateProductRequest{" +
+                "name='" + name + '\'' +
+                ", sku='" + sku + '\'' +
+                ", price=" + price +
+                ", quantity=" + quantity +
+                '}';
     }
 }

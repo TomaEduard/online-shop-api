@@ -1,5 +1,7 @@
 package org.fasttrackit.onlineshopapi.transfer;
 
+//  Se mai numeste si DTO(Data transfer object)
+
 public class CreateProductRequest {
 
     private String name;
