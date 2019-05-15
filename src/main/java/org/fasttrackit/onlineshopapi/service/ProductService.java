@@ -4,23 +4,27 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.fasttrackit.onlineshopapi.domain.Product;
 import org.fasttrackit.onlineshopapi.exception.ResourceNotFoundException;
 import org.fasttrackit.onlineshopapi.persistence.ProductRepository;
-import org.fasttrackit.onlineshopapi.transfer.CreateProductRequest;
-//import java.util.logging.Logger;
-import org.fasttrackit.onlineshopapi.transfer.UpdateProductRequest;
-import org.slf4j.Logger; // sa fie la fel ca cel de la curs
+import org.fasttrackit.onlineshopapi.transfer.product.CreateProductRequest;
+import org.fasttrackit.onlineshopapi.transfer.product.GetProductsRequest;
+import org.fasttrackit.onlineshopapi.transfer.product.UpdateProductRequest;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
+
+import org.springframework.data.domain.Pageable;
 
 import java.util.Optional;
 
+//import java.util.logging.Logger;
 
 @Service
 public class ProductService {
 
-//    Avem o clasa LoggerFactory oferita de spring care printeaza mesajele in consola
-//    Daca este static final va fo un singur LOGGER in toata aplicatia
+    //    Avem o clasa LoggerFactory oferita de spring care printeaza mesajele in consola
+    //    Daca este static final va fo un singur LOGGER in toata aplicatia
     private static final Logger LOGGER = (Logger) LoggerFactory.getLogger(ProductService.class);
 //    Tinem evidenta pasilor realizati prin .info si pentru informatii mai detaliate .debug
 
@@ -34,29 +38,59 @@ public class ProductService {
     }
 
     public Product createProduct(CreateProductRequest request) {
-        System.out.println("Creating product with sout if not exist print null " + request );
-        LOGGER.info("Creating product {}", request );
+//        System.out.println("Creating product with sout if not exist print null " + request );
+        LOGGER.info("Creating product {}", request);
         Product product = objectMapper.convertValue(request, Product.class);
         return productRepository.save(product);
     }
 
+    //    Get & Update Read
     public Product getProduct(long id) throws ResourceNotFoundException {
-        LOGGER.info("Retriving product {}", id );
+        LOGGER.info("Retriving product {}", id);
 //        Returnam produsul cu idulul respectiv, daca nu s-a gasit atunci aruncam exceptia
         return productRepository.findById(id)
 //                Optional and lambda expression
                 .orElseThrow(() -> new ResourceNotFoundException("Product" + id + "Resource not found"));
 
-/*
-//        sau modelul vechi
-        Optional<Product> optional = productRepository.findById(id);
-//        daca optional exista returnam continutul daca nu returnam exceptia
-        if (optional.isPresent() ) {
-            return optional.get();
-        } else {
-            throw new Exception("Product" + id + "Resource not found");
+////        sau modelul vechi
+//        Optional<Product> optional = productRepository.findById(id);
+////        daca optional exista returnam continutul daca nu returnam exceptia
+//        if (optional.isPresent() ) {
+//            return optional.get();
+//        } else {
+//            throw new Exception("Product" + id + "Resource not found");
+//        }
+    }
+
+    public Page<Product> getProducts(GetProductsRequest request, Pageable pageable) {
+        LOGGER.info("Retriving product >> {} ", request);
+//      Objects.nonNull(request.getMaximumPrice() = request.getMaximumPrice() != null
+
+//       find dupa nume & pret
+        if (request.getPartialName() != null &&
+                request.getMinimumPrice() != null &&
+                request.getMaximumPrice() != null &&
+                request.getMinimumQuantity() != null) {
+            return productRepository.findByNameContainingAndPriceBetweenAndQuantityGreaterThanEqual(
+                    request.getPartialName(), request.getMinimumPrice(),
+                    request.getMaximumPrice(), request.getMinimumQuantity(), pageable);
+
+//       find dupa pret
+        } else if (request.getMinimumPrice() != null &&
+                request.getMaximumPrice() != null &&
+                request.getMinimumQuantity() != null) {
+                return productRepository.findByPriceBetweenAndQuantityIsGreaterThanEqual(
+                        request.getMinimumPrice(), request.getMaximumPrice(),
+                        request.getMinimumQuantity(),pageable);
+
+//       find dupa nume
+        } else if (request.getPartialName() != null &&
+            request.getMinimumQuantity() != null) {
+            return productRepository.findByNameContainingAndQuantityIsGreaterThanEqual(
+                    request.getPartialName(), request.getMinimumQuantity(), pageable);
         }
-*/
+
+        return productRepository.findAll(pageable);
     }
 
     public Product updateProduct(long id, UpdateProductRequest request) throws ResourceNotFoundException {
@@ -68,15 +102,15 @@ public class ProductService {
 //        Daca nu folosim BeanUtils va trebui pt fiecare proprietate: product.setName(request.getName());
         BeanUtils.copyProperties(request, product);
 
-//        Metoda .save returneaza produsul updatat. Daca promitem in semnatura metodei return, mai bine
         return productRepository.save(product);
-    }
+}
 
+    //    Delete
     public void deleteProduct(long id) {
-        LOGGER.info("Deleting product {}",id);
+        LOGGER.info("Deleting movie {}", id);
 
         productRepository.deleteById(id);
-        LOGGER.info("Deleted product {}",id);
+        LOGGER.info("Deleted movie {}", id);
     }
 
 

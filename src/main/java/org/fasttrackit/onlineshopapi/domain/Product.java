@@ -11,8 +11,9 @@ import javax.validation.constraints.Size;
 @Entity
 public class Product {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id //    Macrcam coloana ca primary key
+
+    @GeneratedValue(strategy = GenerationType.IDENTITY) //    autoincrement
     private long id;
 
     @NotNull
