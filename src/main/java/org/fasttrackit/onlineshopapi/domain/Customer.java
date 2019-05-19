@@ -6,6 +6,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.Objects;
 
 
 @Entity //  Pentru ca aceasta reprezinta o tabela din db
@@ -30,6 +31,19 @@ public class Customer {
     private String username;
     private String password;
 
+
+    @Override // daca au id'urile la fel inseamnsa ca sunt acelasi obiect
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Customer customer = (Customer) o;
+        return id == customer.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
 
     public long getId() {
         return id;

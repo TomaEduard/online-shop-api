@@ -3,7 +3,7 @@ package org.fasttrackit.onlineshopapi;
 import org.fasttrackit.onlineshopapi.domain.Product;
 import org.fasttrackit.onlineshopapi.exception.ResourceNotFoundException;
 import org.fasttrackit.onlineshopapi.service.ProductService;
-import org.fasttrackit.onlineshopapi.transfer.product.CreateProductRequest;
+import org.fasttrackit.onlineshopapi.steps.ProductSteps;
 import org.fasttrackit.onlineshopapi.transfer.product.GetProductsRequest;
 import org.fasttrackit.onlineshopapi.transfer.product.UpdateProductRequest;
 import org.junit.Test;
@@ -28,19 +28,13 @@ public class ProductServiceIntegrationTests {
     @Autowired
     private ProductService productService;
 
-    private Product createProduct() {
-        CreateProductRequest request = new CreateProductRequest();
-        request.setName("Laptop");
-        request.setPrice(10);
-        request.setQuantity(3);
-        request.setSku("numarUnic");
+    @Autowired
+    private ProductSteps productSteps;
 
-        return productService.createProduct(request);
-    }
 
     @Test
     public void testCreateProduct_whenValidRequest_thenReturnProductWithId() {
-        Product product = createProduct();
+        Product product = productSteps.createProduct();
 
         // Make sure the product does not have null values
         assertThat(product, notNullValue());
@@ -50,7 +44,7 @@ public class ProductServiceIntegrationTests {
 //    Get product
     @Test
     public void testGetProduct_whenExistingId_thenReturnMatchingProduct() throws ResourceNotFoundException {
-        Product product = createProduct();
+        Product product = productSteps.createProduct();
 
         Product retrievedProduct = productService.getProduct(product.getId());
         assertThat(retrievedProduct.getId(), is(product.getId()));
@@ -68,14 +62,14 @@ public class ProductServiceIntegrationTests {
     public void testUpdateProduct_whenValidRequestWithAllFields_thenReturnUpdatedProduct() throws ResourceNotFoundException {
 
         // Simulam obiectul in db
-        Product createdProduct = createProduct();
+        Product createdProduct = productSteps.createProduct();
 
         // Simulam requestul
         UpdateProductRequest request = new UpdateProductRequest();
-        request.setName(createProduct().getName()+ "_Edited");
-        request.setPrice(createProduct().getPrice()+ 10);
-        request.setQuantity(createProduct().getQuantity() + 10);
-        request.setSku(createProduct().getSku()+"_Edited");
+        request.setName(productSteps.createProduct().getName()+ "_Edited");
+        request.setPrice(productSteps.createProduct().getPrice()+ 10);
+        request.setQuantity(productSteps.createProduct().getQuantity() + 10);
+        request.setSku(productSteps.createProduct().getSku()+"_Edited");
 
         Product updatedProduct = productService.updateProduct(createdProduct.getId(), request);
         assertThat(updatedProduct.getName(), is(request.getName()));
@@ -94,7 +88,7 @@ public class ProductServiceIntegrationTests {
 
     @Test (expected = ResourceNotFoundException.class)
     public void testDeleteProduct_whenEdistingId_thenProductIsDeleted() throws ResourceNotFoundException {
-        Product createdProduct = createProduct();
+        Product createdProduct = productSteps.createProduct();
 
         productService.deleteProduct(createdProduct.getId());
 
@@ -103,7 +97,7 @@ public class ProductServiceIntegrationTests {
 
     @Test
     public void testGetProducts_whenAllCriteriaProvidedAndMatching_thenReturnFilteredResults(){
-        Product createdProduct = createProduct();
+        Product createdProduct = productSteps.createProduct();
 
         GetProductsRequest request = new GetProductsRequest();
         request.setPartialName("top");
