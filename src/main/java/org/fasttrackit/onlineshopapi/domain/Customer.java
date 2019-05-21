@@ -31,7 +31,6 @@ public class Customer {
     private String username;
     private String password;
 
-
     @Override // daca au id'urile la fel inseamnsa ca sunt acelasi obiect
     public boolean equals(Object o) {
         if (this == o) return true;

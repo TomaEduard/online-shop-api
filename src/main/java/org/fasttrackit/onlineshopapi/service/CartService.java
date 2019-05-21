@@ -1,6 +1,5 @@
 package org.fasttrackit.onlineshopapi.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.fasttrackit.onlineshopapi.domain.Cart;
 import org.fasttrackit.onlineshopapi.domain.Customer;
 import org.fasttrackit.onlineshopapi.domain.Product;
@@ -23,7 +22,7 @@ public class CartService {
     private final ProductService productService;
 
     @Autowired
-    public CartService(CartRepository cartRepository, CustomerService customerService, ProductService productService, ObjectMapper objectMapper) {
+    public CartService(CartRepository cartRepository, CustomerService customerService, ProductService productService) {
         this.cartRepository = cartRepository;
         this.customerService = customerService;
         this.productService = productService;
