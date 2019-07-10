@@ -13,7 +13,6 @@ import java.util.Objects;
 public class Customer {
 
     @Id //  primary key
-
     @GeneratedValue(strategy = GenerationType.IDENTITY) //  autoincrement
     private long id;
 

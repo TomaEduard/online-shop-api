@@ -1,4 +1,4 @@
-package org.fasttrackit.onlineshopapi;
+package org.fasttrackit.onlineshopapi.integrationTest;
 
 import org.fasttrackit.onlineshopapi.domain.Cart;
 import org.fasttrackit.onlineshopapi.domain.Customer;
@@ -53,3 +53,13 @@ public class CartIntegrationTests {
 	}
 
 }
+
+
+
+
+
+
+
+
+
+

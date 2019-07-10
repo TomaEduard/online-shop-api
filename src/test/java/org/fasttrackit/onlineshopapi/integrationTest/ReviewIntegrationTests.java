@@ -1,4 +1,4 @@
-package org.fasttrackit.onlineshopapi;
+package org.fasttrackit.onlineshopapi.integrationTest;
 
 import org.fasttrackit.onlineshopapi.domain.Product;
 import org.fasttrackit.onlineshopapi.domain.Review;

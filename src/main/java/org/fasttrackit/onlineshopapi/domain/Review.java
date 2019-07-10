@@ -6,7 +6,7 @@ import javax.persistence.*;
 public class Review {
 
     //by default fara (strategy = GenerationType.IDENTITY) se va crea o tabela sepaerat in db in care se
-    // tine evidenta cum s-au generat id'urile. Pentru a scapa de acea tabela in pluc trebuie acest strategy=..
+    // tine evidenta cum s-au generat id'urile. Pentru a scapa de acea tabela in plus trebuie acest strategy=..
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;

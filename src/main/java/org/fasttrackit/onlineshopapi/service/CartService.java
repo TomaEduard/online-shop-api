@@ -38,11 +38,10 @@ public class CartService {
         cart.setCustomer(customer); // adaugam cartului, customerul cu acelasi id
 
         for (Long id : request.getProductIds()) {
-            // could be done more efficientyle with a getAllProductsByIds
+            // could be done more efficiently with a getAllProductsByIds
             Product product = productService.getProduct(id);
             cart.addProduct(product);
         }
-
         return cartRepository.save(cart);
     }
 

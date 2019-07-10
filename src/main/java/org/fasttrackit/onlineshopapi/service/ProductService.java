@@ -6,14 +6,19 @@ import org.fasttrackit.onlineshopapi.exception.ResourceNotFoundException;
 import org.fasttrackit.onlineshopapi.persistence.ProductRepository;
 import org.fasttrackit.onlineshopapi.transfer.product.CreateProductRequest;
 import org.fasttrackit.onlineshopapi.transfer.product.GetProductsRequest;
+import org.fasttrackit.onlineshopapi.transfer.product.ProductResponse;
 import org.fasttrackit.onlineshopapi.transfer.product.UpdateProductRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 //import java.util.logging.Logger;
 
@@ -59,16 +64,18 @@ public class ProductService {
 //        }
     }
 
-    public Page<Product> getProducts(GetProductsRequest request, Pageable pageable) {
+    public Page<ProductResponse> getProducts(GetProductsRequest request, Pageable pageable) {
         LOGGER.info("Retriving product >> {} ", request);
 //      Objects.nonNull(request.getMaximumPrice() = request.getMaximumPrice() != null
+
+        Page<Product> products;
 
 //       find dupa nume & pret
         if (request.getPartialName() != null &&
                 request.getMinimumPrice() != null &&
                 request.getMaximumPrice() != null &&
                 request.getMinimumQuantity() != null) {
-            return productRepository.findByNameContainingAndPriceBetweenAndQuantityGreaterThanEqual(
+            products = productRepository.findByNameContainingAndPriceBetweenAndQuantityGreaterThanEqual(
                     request.getPartialName(), request.getMinimumPrice(),
                     request.getMaximumPrice(), request.getMinimumQuantity(), pageable);
 
@@ -76,18 +83,32 @@ public class ProductService {
         } else if (request.getMinimumPrice() != null &&
                 request.getMaximumPrice() != null &&
                 request.getMinimumQuantity() != null) {
-                return productRepository.findByPriceBetweenAndQuantityIsGreaterThanEqual(
+            products = productRepository.findByPriceBetweenAndQuantityIsGreaterThanEqual(
                         request.getMinimumPrice(), request.getMaximumPrice(),
                         request.getMinimumQuantity(),pageable);
 
 //       find dupa nume
         } else if (request.getPartialName() != null &&
-            request.getMinimumQuantity() != null) {
-            return productRepository.findByNameContainingAndQuantityIsGreaterThanEqual(
+                request.getMinimumQuantity() != null) {
+            products = productRepository.findByNameContainingAndQuantityIsGreaterThanEqual(
                     request.getPartialName(), request.getMinimumQuantity(), pageable);
+        } else {
+            products = productRepository.findAll(pageable);
         }
 
-        return productRepository.findAll(pageable);
+//        pentru fiecare obiect din db obtinem cate un obiect ProductResponse pe care il adaugam intr-o lista
+        List<ProductResponse> productResponseList = new ArrayList<>();
+        for(Product product : products.getContent()) {
+            ProductResponse productResponse = new ProductResponse();
+            productResponse.setId(product.getId());
+            productResponse.setName(product.getName());
+            productResponse.setPrice(product.getPrice());
+            productResponse.setQuantity(product.getQuantity());
+            productResponse.setSku(product.getSku());
+
+            productResponseList.add(productResponse);
+        }
+        return new PageImpl<>(productResponseList, pageable, products.getTotalElements());
     }
 
     public Product updateProduct(long id, UpdateProductRequest request) throws ResourceNotFoundException {
@@ -95,7 +116,7 @@ public class ProductService {
 //        Aducem produsul din db cu id'ul primit
         Product product = getProduct(id);
 
-//        Copiam proprietatile ce le primim pe request si le copiam in procuct
+//        Copiam proprietatile ce le primim pe request si le copiam in product
 //        Daca nu folosim BeanUtils va trebui pt fiecare proprietate: product.setName(request.getName());
         BeanUtils.copyProperties(request, product);
 

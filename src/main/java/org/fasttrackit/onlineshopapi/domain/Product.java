@@ -12,7 +12,6 @@ import java.util.Set;
 public class Product {
 
     @Id //    Macrcam coloana ca primary key
-
     @GeneratedValue(strategy = GenerationType.IDENTITY) //    autoincrement
     private long id;
 
